@@ -1,0 +1,10 @@
+{
+  "name": "janus-ui",
+  "version": "0.0.1",
+  "description": "Electron-based UI for Janus editor",
+  "main": "main.js",
+  "repository": "https://github.com/rfaulhaber/janus",
+  "author": "Ryan Faulhaber",
+  "license": "MIT",
+  "private": true
+}
