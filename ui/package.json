@@ -9,7 +9,8 @@
 	"private": true,
 	"scripts": {
 		"start": "electron .",
-		"build": "webpack"
+		"build": "webpack",
+		"dev-server": "webpack-dev-server"
 	},
 	"devDependencies": {
 		"css-loader": "^3.2.1",
@@ -17,7 +18,8 @@
 		"electron-builder": "^21.2.0",
 		"style-loader": "^1.0.1",
 		"webpack": "^4.41.2",
-		"webpack-cli": "^3.3.10"
+		"webpack-cli": "^3.3.10",
+		"webpack-dev-server": "^3.9.0"
 	},
 	"dependencies": {
 		"codemirror": "^5.49.2"

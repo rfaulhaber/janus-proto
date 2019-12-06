@@ -1,0 +1,2 @@
+electron: yarn start
+dev-server: yarn run dev-server
