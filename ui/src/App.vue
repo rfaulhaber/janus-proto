@@ -1,12 +1,11 @@
 <template>
     <div id="app">
-        <Pane text="Hello" />
+        <Tile />
     </div>
 </template>
 
 <script>
-// import HelloWorld from './components/HelloWorld.vue';
-import Pane from './components/Pane.vue';
+import Tile from './components/Tile.vue';
 import { ipcRenderer } from 'electron';
 
 console.log(typeof ipcRenderer);
@@ -14,7 +13,7 @@ console.log(typeof ipcRenderer);
 export default {
     name: 'app',
     components: {
-        Pane
+        Tile
     }
 };
 </script>
