@@ -1,2 +1,2 @@
-electron: yarn start
-dev-server: yarn run dev-server
+vue: yarn run serve --port 8080
+electron: yarn run electron

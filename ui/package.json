@@ -1,27 +1,48 @@
 {
-	"name": "janus-ui",
-	"version": "0.0.1",
-	"description": "Electron-based UI for Janus editor",
-	"main": "src/main.js",
-	"repository": "https://github.com/rfaulhaber/janus",
-	"author": "Ryan Faulhaber",
-	"license": "MIT",
-	"private": true,
-	"scripts": {
-		"start": "electron .",
-		"build": "webpack",
-		"dev-server": "webpack-dev-server"
-	},
-	"devDependencies": {
-		"css-loader": "^3.2.1",
-		"electron": "^7.1.3",
-		"electron-builder": "^21.2.0",
-		"style-loader": "^1.0.1",
-		"webpack": "^4.41.2",
-		"webpack-cli": "^3.3.10",
-		"webpack-dev-server": "^3.9.0"
-	},
-	"dependencies": {
-		"codemirror": "^5.49.2"
-	}
+    "name": "ui",
+    "version": "0.1.0",
+    "private": true,
+    "main": "src/electron.js",
+    "scripts": {
+        "serve": "vue-cli-service serve",
+        "build": "vue-cli-service build",
+        "lint": "vue-cli-service lint",
+        "electron": "electron ."
+    },
+    "dependencies": {
+        "codemirror": "^5.49.2",
+        "core-js": "^3.4.3",
+        "vue": "^2.6.10"
+    },
+    "devDependencies": {
+        "@vue/cli-plugin-babel": "^4.1.0",
+        "@vue/cli-plugin-eslint": "^4.1.0",
+        "@vue/cli-service": "^4.1.0",
+        "babel-eslint": "^10.0.3",
+        "electron": "^7.1.3",
+        "electron-builder": "^21.2.0",
+        "eslint": "^5.16.0",
+        "eslint-plugin-vue": "^5.0.0",
+        "vue-template-compiler": "^2.6.10"
+    },
+    "eslintConfig": {
+        "root": true,
+        "env": {
+            "node": true
+        },
+        "extends": [
+            "plugin:vue/essential",
+            "eslint:recommended"
+        ],
+        "rules": {
+            "no-console": "off"
+        },
+        "parserOptions": {
+            "parser": "babel-eslint"
+        }
+    },
+    "browserslist": [
+        "> 1%",
+        "last 2 versions"
+    ]
 }
