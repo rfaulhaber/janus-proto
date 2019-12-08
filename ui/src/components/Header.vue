@@ -1,8 +1,9 @@
 <template>
-	<div ref="editor" class="menu" rows="1"></div>
+	<div ref="editor" class="menu"></div>
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 import * as CodeMirror from 'codemirror';
 import 'codemirror/lib/codemirror.css';
 
@@ -11,12 +12,58 @@ export default {
 	props: {
 		value: String
 	},
-	mounted: function() {
-		CodeMirror(this.$refs.editor, {
-			value: this.value
+	mounted() {
+		const state = {
+			middleClick: false
+		};
+
+		const editor = CodeMirror(this.$refs.editor, {
+			value: this.value,
+			extraKeys: {
+				RightClick: function() {
+					console.log('right click');
+
+					const { word } = getClickedWord();
+					console.log('word', word);
+					console.log('selection', editor.getSelection());
+				},
+				MiddleClick: () => {
+					console.log('middle click');
+					state.middleClick = true;
+
+					const { word } = getClickedWord();
+					console.log('word', word);
+					console.log('selection', editor.getSelection());
+
+					this.emit(word);
+				}
+			}
 		});
 
-		// this.$refs.editor.style.height = 'auto';
+		editor.on('mousedown', function() {
+			console.log('clicked');
+		});
+
+		editor.on('beforeChange', function(inst, changeObj) {
+			if (state.middleClick) {
+				state.middleClick = false;
+
+				changeObj.cancel();
+			}
+		});
+
+		function getClickedWord() {
+			const range = editor.findWordAt(editor.getCursor());
+			const word = editor.getRange(range.anchor, range.head);
+
+			return {
+				word,
+				range
+			};
+		}
+	},
+	methods: {
+		...mapActions(['emit'])
 	}
 };
 </script>

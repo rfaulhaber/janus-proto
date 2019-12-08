@@ -14,8 +14,7 @@ export default {
 		text: String
 	},
 	mounted: function() {
-		console.log('files', this.$store.state.files);
-		let state = {
+		const state = {
 			middleClick: false
 		};
 
@@ -53,7 +52,6 @@ export default {
 <style>
 .pane > div {
 	background: rgb(255, 255, 234);
-	height: 100vh;
 }
 
 .editor {

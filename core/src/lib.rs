@@ -1,4 +1,7 @@
 extern crate ropey;
+
+mod rpc;
+
 use std::io::{self, BufRead, Read, Write};
 
 pub struct Editor;
@@ -11,7 +14,7 @@ impl Editor {
 	{
 		loop {
 			let mut buf = String::new();
-			reader.read_to_string(&mut buf)?;
+			reader.read_line(&mut buf)?;
 
 			writer.write_all(buf.as_bytes())?;
 		}

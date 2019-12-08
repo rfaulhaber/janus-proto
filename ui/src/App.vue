@@ -1,12 +1,12 @@
 <template>
 	<div id="app">
 		<Header value="Newcol Kill Putall Dump Exit" />
-		<Column />
+		<Columns />
 	</div>
 </template>
 
 <script>
-import Column from './components/Column.vue';
+import Columns from './components/Columns.vue';
 import Header from './components/Header.vue';
 import { ipcRenderer } from 'electron';
 
@@ -15,7 +15,7 @@ console.log(typeof ipcRenderer);
 export default {
 	name: 'app',
 	components: {
-		Column,
+		Columns,
 		Header
 	}
 };
@@ -23,6 +23,6 @@ export default {
 
 <style>
 .app {
-	height: 100;
+	height: 100%;
 }
 </style>
