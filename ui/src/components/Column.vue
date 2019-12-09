@@ -1,12 +1,13 @@
 <template>
-	<div class="column">
-		<Header value="New Cut Paste Snarf Sort Zerox Delcol" />
-		<File />
+	<div class="column-container">
+		<Header value="New Cut Paste Delcol" />
+		<div class="files" v-for="(file, index) in files" v-bind:key="index">
+			<File v-bind:index="index" />
+		</div>
 	</div>
 </template>
 
 <script>
-import { mapState } from 'vuex';
 import Header from './Header.vue';
 import File from './File';
 
@@ -19,14 +20,19 @@ export default {
 		Header,
 		File
 	},
-	computed: mapState({
-		files: 'columns'
-	})
+	computed: {
+		files() {
+			return this.$store.state.columns[this.index].files;
+		}
+	}
 };
 </script>
 
 <style scoped>
-.column {
+.column-container {
+	display: flex;
+	flex-flow: column;
+	width: 100%;
 	border-left: 1px solid black;
 	border-right: 1px solid black;
 }

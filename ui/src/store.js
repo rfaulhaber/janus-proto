@@ -11,8 +11,10 @@ const defaultNewFile = {
 const defaultState = {
 	columns: [
 		{
-			id: 1,
-			files: [defaultNewFile]
+			files: [{}, {}]
+		},
+		{
+			files: [{}]
 		}
 	]
 };

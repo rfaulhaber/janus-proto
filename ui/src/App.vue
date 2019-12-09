@@ -1,6 +1,6 @@
 <template>
 	<div id="app">
-		<Header value="Newcol Kill Putall Dump Exit" />
+		<Header value="Newcol Exit" />
 		<Columns />
 	</div>
 </template>

@@ -44,7 +44,8 @@ export default {
 			value: this.value,
 			extraKeys: {
 				RightClick: handleClick('right'),
-				'Cmd-RightClick': handleClick('middle'),
+				'Option-LeftClick': handleClick('middle'),
+				'Cmd-LeftClick': handleClick('right'),
 				MiddleClick: handleClick('middle')
 			}
 		});

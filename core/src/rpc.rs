@@ -3,23 +3,46 @@ use std::error::Error;
 use std::process::{Command, Stdio};
 
 #[derive(Debug, Deserialize)]
-pub struct RpcSignal<'e> {
-	pub click: Click,
-	pub term: &'e str,
+#[serde(rename_all = "lowercase")]
+#[serde(tag = "type")]
+pub enum RpcSignal {
+	Middle(Click),
+	Right(Click),
+}
+
+// TODO should be &strs
+#[derive(Debug, Deserialize)]
+pub struct Click {
+	action: String,
+	selected: Option<String>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct EditorAction {
+	pub kind: EditorActionType,
+	pub column: usize,
+	pub file: usize,
 }
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "lowercase")]
-pub enum Click {
-	Middle,
-	Right,
+pub enum EditorActionType {
+	New,
+	Cut,
+	Paste,
+	Del,
+	Put,
+	Delcol,
+	Newcol,
+	Exit,
 }
 
-pub type SignalResult<'e, T> = Result<T, RpcError>;
+pub type SignalResult<T> = Result<T, RpcError>;
 
 // TODO better errors
 #[derive(Debug, Serialize)]
 pub struct RpcError {
+	// TODO should be &str
 	pub msg: String,
 }
 
@@ -38,16 +61,24 @@ pub struct SignalResponse {
 }
 
 pub fn handle_signal(signal: RpcSignal) -> SignalResult<SignalResponse> {
-	unimplemented!();
+	match signal {
+		RpcSignal::Middle(c) => handle_middle(c),
+		RpcSignal::Right(c) => handle_right(c),
+	}
 }
 
-pub fn handle_middle(input: &str) -> SignalResult<SignalResponse> {
+pub fn handle_middle(click: Click) -> SignalResult<SignalResponse> {
 	// TODO let specify default shell
 
-	let cmd = vec!["-c", input];
+	let input = match click.selected {
+		Some(selection) => format!("echo {} | {}", selection, click.action).to_owned(),
+		None => click.action.to_owned(),
+	};
+
+	let args = vec!["-c", input.as_str()];
 
 	let output = Command::new("bash")
-		.args(cmd)
+		.args(args)
 		.stdout(Stdio::piped())
 		.stderr(Stdio::piped())
 		.spawn()?
@@ -60,6 +91,6 @@ pub fn handle_middle(input: &str) -> SignalResult<SignalResponse> {
 	})
 }
 
-pub fn handle_right(input: &str) -> SignalResult<SignalResponse> {
+pub fn handle_right(click: Click) -> SignalResult<SignalResponse> {
 	unimplemented!();
 }

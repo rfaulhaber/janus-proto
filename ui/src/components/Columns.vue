@@ -1,7 +1,7 @@
 <template>
 	<div class="columns">
-		<div class="column" v-for="column in columns" v-bind:key="column.id">
-			<Column v-bind:index="column.id" />
+		<div class="column-iter" v-for="(column, index) in columns" v-bind:key="index">
+			<Column v-bind:index="index" />
 		</div>
 	</div>
 </template>
@@ -23,9 +23,12 @@ export default {
 
 <style>
 .columns {
-	display: grid;
-	columns: auto;
-	grid-auto-flow: column;
-	grid-auto-columns: auto;
+	display: flex;
+	flex-basis: fit-content;
+}
+
+.column-iter {
+	display: flex;
+	flex: 1;
 }
 </style>

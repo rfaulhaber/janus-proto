@@ -1,6 +1,6 @@
 <template>
-	<div>
-		<Header value="Del Snarf | Look" />
+	<div class="file-container">
+		<Header value="Del Put" />
 		<Editor />
 	</div>
 </template>
@@ -11,6 +11,9 @@ import Editor from './Editor.vue';
 
 export default {
 	name: 'File',
+	props: {
+		index: Number
+	},
 	components: {
 		Header,
 		Editor
