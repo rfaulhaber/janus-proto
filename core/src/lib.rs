@@ -1,8 +1,10 @@
-extern crate ropey;
+extern crate serde;
+extern crate serde_json;
 
 mod rpc;
 
-use std::io::{self, BufRead, Read, Write};
+use rpc::*;
+use std::io::{self, BufRead, Write};
 
 pub struct Editor;
 
@@ -16,7 +18,19 @@ impl Editor {
 			let mut buf = String::new();
 			reader.read_line(&mut buf)?;
 
-			writer.write_all(buf.as_bytes())?;
+			let signal: RpcSignal = serde_json::from_str(buf.as_str())?;
+
+			let resp = match signal.click {
+				// TODO don't unwrap
+				Click::Middle => handle_middle(signal.term).unwrap(),
+				Click::Right => handle_right(signal.term).unwrap(),
+			};
+
+			// TODO don't unwrap
+			let resp_json = serde_json::to_string(&resp).unwrap();
+
+			writer.write_all(resp_json.as_bytes())?;
+			writer.flush()?;
 		}
 	}
 }

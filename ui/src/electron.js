@@ -28,12 +28,17 @@ const corePath = argv[2];
 const core = spawn(corePath);
 
 core.stdout.on('data', function(data) {
-	console.log('core emitted data', data.toString());
+	console.log(`core emitted data "${data.toString()}"`);
+	win.webContents.send('ipc', JSON.parse(data));
+});
+
+core.stderr.on('data', function(data) {
+	console.error(`core emitted error"${data.toString()}"`);
 });
 
 ipcMain.on('ipc', function(event, arg) {
-	console.log('got asynchronous message from renderer', event, arg);
-	event.reply('hello');
+	console.log('received command from renderer', arg);
+	core.stdin.write(`${JSON.stringify(arg)}\n`);
 });
 
 function createWindow() {

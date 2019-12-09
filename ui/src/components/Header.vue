@@ -17,26 +17,35 @@ export default {
 			middleClick: false
 		};
 
+		const handleClick = click => editor => {
+			console.log('this', this);
+			console.log('which', click);
+
+			const { word } = getClickedWord(editor);
+			const selection = editor.getSelection();
+			console.log('word', word);
+			console.log('selection', selection);
+
+			let term;
+
+			if (selection) {
+				term = selection;
+			} else {
+				term = word;
+			}
+
+			this.emit({
+				click,
+				term
+			});
+		};
+
 		const editor = CodeMirror(this.$refs.editor, {
 			value: this.value,
 			extraKeys: {
-				RightClick: function() {
-					console.log('right click');
-
-					const { word } = getClickedWord();
-					console.log('word', word);
-					console.log('selection', editor.getSelection());
-				},
-				MiddleClick: () => {
-					console.log('middle click');
-					state.middleClick = true;
-
-					const { word } = getClickedWord();
-					console.log('word', word);
-					console.log('selection', editor.getSelection());
-
-					this.emit(word);
-				}
+				RightClick: handleClick('right'),
+				'Cmd-RightClick': handleClick('middle'),
+				MiddleClick: handleClick('middle')
 			}
 		});
 
@@ -52,7 +61,7 @@ export default {
 			}
 		});
 
-		function getClickedWord() {
+		function getClickedWord(editor) {
 			const range = editor.findWordAt(editor.getCursor());
 			const word = editor.getRange(range.anchor, range.head);
 

@@ -42,4 +42,8 @@ const store = new Store({
 	}
 });
 
+ipcRenderer.on('ipc', (event, arg) => {
+	console.log('event, arg', event, arg);
+});
+
 export default store;
