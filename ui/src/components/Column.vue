@@ -33,7 +33,5 @@ export default {
 	display: flex;
 	flex-flow: column;
 	width: 100%;
-	border-left: 1px solid black;
-	border-right: 1px solid black;
 }
 </style>

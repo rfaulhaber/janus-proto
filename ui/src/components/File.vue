@@ -20,3 +20,11 @@ export default {
 	}
 };
 </script>
+
+<style scoped>
+.file-container {
+	border-left: 1px solid black;
+	border-bottom: 1px solid black;
+	border-right: 1px solid black;
+}
+</style>

@@ -3,6 +3,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 import * as CodeMirror from 'codemirror';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/addon/display/fullscreen.css';
@@ -13,38 +14,58 @@ export default {
 	props: {
 		text: String
 	},
-	mounted: function() {
+	mounted() {
 		const state = {
 			middleClick: false
 		};
 
-		const editorElement = this.$refs.editor;
-		const editor = CodeMirror(editorElement, {
+		const handleClick = click => editor => {
+			const { word } = getClickedWord(editor);
+			const selection = editor.getSelection();
+			console.log('word', word);
+			console.log('selection', selection);
+
+			this.emit({
+				click,
+				word,
+				selection
+			});
+		};
+
+		const editor = CodeMirror(this.$refs.editor, {
 			value: 'foo',
 			extraKeys: {
-				RightClick: function() {
-					console.log('right click');
-				},
-				MiddleClick: function() {
-					console.log('middle click');
-					state.middleClick = true;
-				}
-			}
-		});
-
-		editor.on('mousedown', function() {
-			console.log('clicked');
+				RightClick: handleClick('right'),
+				'Alt-LeftClick': handleClick('middle'),
+				'Cmd-LeftClick': handleClick('right'),
+				MiddleClick: handleClick('middle')
+			},
+			cursorBlinkRate: 0
 		});
 
 		editor.on('beforeChange', function(inst, changeObj) {
-			console.log('e', inst, changeObj);
-
 			if (state.middleClick) {
 				state.middleClick = false;
 
 				changeObj.cancel();
 			}
 		});
+
+		function getClickedWord(editor) {
+			const range = editor.findWordAt(editor.getCursor());
+			const word = editor.getRange(range.anchor, range.head);
+
+			console.log('range', range);
+			console.log('word', word);
+
+			return {
+				word,
+				range
+			};
+		}
+	},
+	methods: {
+		...mapActions(['emit'])
 	}
 };
 </script>

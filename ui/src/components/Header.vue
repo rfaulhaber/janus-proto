@@ -81,8 +81,10 @@ export default {
 <style>
 .menu > div {
 	height: auto;
-	border-top: 1px solid black;
-	border-bottom: 1px solid black;
 	background: rgb(234, 255, 255);
+}
+
+.menu {
+	border: 1px solid black;
 }
 </style>

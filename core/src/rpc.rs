@@ -2,6 +2,15 @@ use serde::{Deserialize, Serialize};
 use std::error::Error;
 use std::process::{Command, Stdio};
 
+/*
+   Signal schema
+   {
+	   type: middle | right
+	   command: String
+	   selection: String
+   }
+*/
+
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "lowercase")]
 #[serde(tag = "type")]
@@ -35,6 +44,14 @@ pub enum EditorActionType {
 	Delcol,
 	Newcol,
 	Exit,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum EditorIOType {
+	Pipe,
+	In,
+	Out,
 }
 
 pub type SignalResult<T> = Result<T, RpcError>;

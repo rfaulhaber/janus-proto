@@ -11,9 +11,6 @@ const defaultNewFile = {
 const defaultState = {
 	columns: [
 		{
-			files: [{}, {}]
-		},
-		{
 			files: [{}]
 		}
 	]
@@ -35,7 +32,7 @@ const store = new Store({
 	actions: {
 		/*eslint no-unused-vars: "off"*/
 		emit({ commit }, command) {
-			console.log('in store');
+			console.log('in store', command);
 			ipcRenderer.send('ipc', command);
 		},
 		addColumn({ commit }) {
@@ -49,3 +46,10 @@ ipcRenderer.on('ipc', (event, arg) => {
 });
 
 export default store;
+
+function transformCommand(command) {
+	const { click, word, selection } = command;
+	return {
+		type: click
+	};
+}
