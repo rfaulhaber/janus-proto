@@ -2,7 +2,7 @@
 	<div class="column-container">
 		<Header value="New Cut Paste Delcol" />
 		<div class="files" v-for="(file, index) in files" v-bind:key="index">
-			<File v-bind:index="index" />
+			<File v-bind:index="index" v-bind:value="file.value" />
 		</div>
 	</div>
 </template>

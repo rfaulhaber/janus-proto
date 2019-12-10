@@ -13,8 +13,15 @@ use std::process::{Command, Stdio};
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "lowercase")]
+pub struct RpcSignal {
+	pub kind: RpcSignalKind,
+	pub id: usize,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "lowercase")]
 #[serde(tag = "type")]
-pub enum RpcSignal {
+pub enum RpcSignalKind {
 	Middle(Click),
 	Right(Click),
 }
@@ -75,22 +82,28 @@ impl From<std::io::Error> for RpcError {
 pub struct SignalResponse {
 	pub stdout: String,
 	pub stderr: String,
+	pub id: usize,
 }
 
 pub fn handle_signal(signal: RpcSignal) -> SignalResult<SignalResponse> {
-	match signal {
-		RpcSignal::Middle(c) => handle_middle(c),
-		RpcSignal::Right(c) => handle_right(c),
+	match signal.kind {
+		RpcSignalKind::Middle(c) => handle_middle(c, signal.id),
+		RpcSignalKind::Right(c) => handle_right(c),
 	}
 }
 
-pub fn handle_middle(click: Click) -> SignalResult<SignalResponse> {
+pub fn handle_middle(click: Click, id: usize) -> SignalResult<SignalResponse> {
 	// TODO let specify default shell
 
 	let input = match click.selected {
-		Some(selection) => format!("echo {} | {}", selection, click.action).to_owned(),
-		None => click.action.to_owned(),
+		Some(sel) => sel,
+		None => click.action,
 	};
+
+	// let input = match click.selected {
+	// 	Some(selection) => format!("echo {} | {}", selection, click.action).to_owned(),
+	// 	None => click.action.to_owned(),
+	// };
 
 	let args = vec!["-c", input.as_str()];
 
@@ -103,6 +116,7 @@ pub fn handle_middle(click: Click) -> SignalResult<SignalResponse> {
 
 	Ok(SignalResponse {
 		// TODO don't unwrap
+		id,
 		stdout: String::from_utf8(output.stdout).unwrap(),
 		stderr: String::from_utf8(output.stderr).unwrap(),
 	})

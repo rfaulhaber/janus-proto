@@ -41,7 +41,7 @@ impl Editor {
 
 			let signal: RpcSignal = serde_json::from_str(buf.as_str())?;
 
-			let resp = handle_signal(signal);
+			let resp = handle_signal(signal).unwrap();
 
 			// TODO don't unwrap
 			let resp_json = serde_json::to_string(&resp).unwrap();

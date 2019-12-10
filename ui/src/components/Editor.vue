@@ -33,7 +33,7 @@ export default {
 		};
 
 		const editor = CodeMirror(this.$refs.editor, {
-			value: 'foo',
+			value: this.text,
 			extraKeys: {
 				RightClick: handleClick('right'),
 				'Alt-LeftClick': handleClick('middle'),
