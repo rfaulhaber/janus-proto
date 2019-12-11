@@ -4,15 +4,12 @@ import { ipcRenderer } from 'electron';
 
 Vue.use(Vuex);
 
-const defaultNewFile = {
-	name: ''
-};
-
 const defaultState = {
 	columns: [
 		{
 			files: [
 				{
+					title: '/Users/rfaulhaber',
 					value: ''
 				}
 			]
@@ -30,31 +27,29 @@ const store = new Store({
 		addColumn(state) {
 			state.columns.push({
 				id: state.columns.length,
-				file: [defaultNewFile]
+				file: [
+					{
+						title: '',
+						value: ''
+					}
+				]
 			});
 		},
 		removeColumn(state, id) {
 			state.columns = state.columns.filter(column => column.id !== id);
 		},
-		addFileFromCore(state, stdout, stderr) {
+		addFileFromCore(state, { stdout, stderr }) {
 			console.log('stdout, stderr', stdout, stderr);
 			state.columns[state.columns.length - 1].files.push({
 				value: (stdout || '').concat(stderr || '')
 			});
 		},
-		addFileFromEditor(state, { fileIndex, columnIndex }) {
-			console.log('fileIndex, columnIndex', fileIndex, columnIndex);
+		addFileFromEditor(state, { columnIndex }) {
 			state.columns[columnIndex].files.push({
 				value: ''
 			});
 		},
 		closeFile(state, { fileIndex, columnIndex }) {
-			console.log(
-				'closeFile -- fileIndex, columnIndex',
-				fileIndex,
-				columnIndex
-			);
-
 			state.columns[columnIndex].files.splice(fileIndex, 1);
 		}
 	},
@@ -62,7 +57,10 @@ const store = new Store({
 		emit({ commit }, command) {
 			console.log('in store', command);
 
-			if (editorCommands.includes(command.word)) {
+			if (
+				editorCommands.includes(command.word) &&
+				command.click === 'middle'
+			) {
 				console.log('editor command!');
 
 				const { fileIndex, columnIndex } = command;
@@ -76,26 +74,30 @@ const store = new Store({
 						break;
 				}
 			} else {
-				const { redirectionType, ...rest } = transformCommand(command);
+				if (!editorCommands.includes(command.word)) {
+					const { redirectionType, ...rest } = transformCommand(
+						command
+					);
 
-				const transformedCommand = {
-					kind: rest,
-					id: pendingActions.length
-				};
+					const transformedCommand = {
+						kind: rest,
+						id: pendingActions.length
+					};
 
-				pendingActions.push({
-					redirectionType,
-					...transformedCommand
-				});
+					pendingActions.push({
+						redirectionType,
+						...transformedCommand
+					});
 
-				ipcRenderer.send('ipc', transformedCommand);
+					ipcRenderer.send('ipc', transformedCommand);
+				}
 			}
 		},
 		addColumn({ commit }) {
 			commit('addColumn');
 		},
-		addFileFromCore({ commit }, stdout, stderr) {
-			commit('addFileFromCore', stdout, stderr);
+		addFileFromCore({ commit }, { stdout, stderr }) {
+			commit('addFileFromCore', { stdout, stderr });
 		},
 		addFileFromEditor({ commit }, fileIndex, columnIndex) {
 			commit('addFileFromEditor', fileIndex, columnIndex);
@@ -119,7 +121,7 @@ ipcRenderer.on('ipc', (event, arg) => {
 		case '|':
 			break;
 		default:
-			store.dispatch('addFileFromCore', stdout || '', stderr || '');
+			store.dispatch('addFileFromCore', { stdout, stderr });
 	}
 });
 

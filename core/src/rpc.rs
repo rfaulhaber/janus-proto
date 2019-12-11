@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::error::Error;
+use std::fs;
+use std::path::Path;
 use std::process::{Command, Stdio};
 
 /*
@@ -88,7 +90,7 @@ pub struct SignalResponse {
 pub fn handle_signal(signal: RpcSignal) -> SignalResult<SignalResponse> {
 	match signal.kind {
 		RpcSignalKind::Middle(c) => handle_middle(c, signal.id),
-		RpcSignalKind::Right(c) => handle_right(c),
+		RpcSignalKind::Right(c) => handle_right(c, signal.id),
 	}
 }
 
@@ -99,11 +101,6 @@ pub fn handle_middle(click: Click, id: usize) -> SignalResult<SignalResponse> {
 		Some(sel) => sel,
 		None => click.action,
 	};
-
-	// let input = match click.selected {
-	// 	Some(selection) => format!("echo {} | {}", selection, click.action).to_owned(),
-	// 	None => click.action.to_owned(),
-	// };
 
 	let args = vec!["-c", input.as_str()];
 
@@ -122,6 +119,44 @@ pub fn handle_middle(click: Click, id: usize) -> SignalResult<SignalResponse> {
 	})
 }
 
-pub fn handle_right(click: Click) -> SignalResult<SignalResponse> {
-	unimplemented!();
+pub fn handle_right(click: Click, id: usize) -> SignalResult<SignalResponse> {
+	let path = match click.selected {
+		Some(sel) => sel,
+		None => click.action,
+	};
+
+	let metadata_res = fs::metadata(Path::new(&path));
+
+	match metadata_res {
+		Ok(metadata) => {
+			if metadata.is_dir() {
+				// sure why not
+				let ls_output = Command::new("ls")
+					.args(&["-a", path.as_str()])
+					.stdout(Stdio::piped())
+					.stderr(Stdio::piped())
+					.spawn()?
+					.wait_with_output()?;
+
+				Ok(SignalResponse {
+					id,
+					stdout: String::from_utf8(ls_output.stdout).unwrap(),
+					stderr: String::from_utf8(ls_output.stderr).unwrap(),
+				})
+			} else {
+				let contents = fs::read_to_string(path)?;
+
+				Ok(SignalResponse {
+					id,
+					stdout: contents,
+					stderr: String::new(),
+				})
+			}
+		}
+		Err(e) => Ok(SignalResponse {
+			id,
+			stdout: String::new(),
+			stderr: format!("cannot open {}, no such file or directory", path),
+		}),
+	}
 }

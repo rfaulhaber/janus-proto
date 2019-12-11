@@ -34,6 +34,7 @@ core.stdout.on('data', function(data) {
 
 core.stderr.on('data', function(data) {
 	console.error(`core emitted error"${data.toString()}"`);
+	win.webContents.send('ipc', JSON.parse(data));
 });
 
 ipcMain.on('ipc', function(event, arg) {

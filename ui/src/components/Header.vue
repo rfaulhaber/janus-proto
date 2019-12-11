@@ -12,7 +12,8 @@ export default {
 	props: {
 		value: String,
 		columnIndex: Number,
-		fileIndex: Number
+		fileIndex: Number,
+		title: String
 	},
 	mounted() {
 		console.log('column, file', this.columnIndex, this.fileIndex);
@@ -35,8 +36,13 @@ export default {
 			});
 		};
 
+		console.log('title', this.title);
+		const headerTitle = this.title
+			? `${this.title} ${this.value}`
+			: this.value;
+
 		const editor = CodeMirror(this.$refs.editor, {
-			value: this.value,
+			value: headerTitle,
 			extraKeys: {
 				RightClick: handleClick('right'),
 				'Alt-LeftClick': handleClick('middle'),

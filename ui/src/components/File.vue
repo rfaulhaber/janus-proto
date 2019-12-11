@@ -1,7 +1,16 @@
 <template>
 	<div class="file-container">
-		<Header value="Del Put" v-bind:columnIndex="columnIndex" v-bind:fileIndex="fileIndex" />
-		<Editor v-bind:text="value" v-bind:columnIndex="columnIndex" v-bind:fileIndex="fileIndex" />
+		<Header
+			value="Del Put"
+			v-bind:columnIndex="columnIndex"
+			v-bind:fileIndex="fileIndex"
+			v-bind:title="fileTitle"
+		/>
+		<Editor
+			v-bind:text="fileText"
+			v-bind:columnIndex="columnIndex"
+			v-bind:fileIndex="fileIndex"
+		/>
 	</div>
 </template>
 
@@ -19,6 +28,19 @@ export default {
 	components: {
 		Header,
 		Editor
+	},
+	computed: {
+		file() {
+			return this.$store.state.columns[this.columnIndex].files[
+				this.fileIndex
+			];
+		},
+		fileText() {
+			return this.file.value;
+		},
+		fileTitle() {
+			return this.file.title;
+		}
 	}
 };
 </script>
