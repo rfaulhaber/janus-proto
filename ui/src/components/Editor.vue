@@ -12,9 +12,12 @@ import 'codemirror/addon/display/fullscreen.js';
 export default {
 	name: 'Editor',
 	props: {
-		text: String
+		text: String,
+		fileIndex: Number,
+		columnIndex: Number
 	},
 	mounted() {
+		console.log('fileindex, columnindex', this.fileIndex, this.columnIndex);
 		const state = {
 			middleClick: false
 		};
@@ -28,7 +31,9 @@ export default {
 			this.emit({
 				click,
 				word,
-				selection
+				selection,
+				fileIndex: this.fileIndex,
+				columnIndex: this.columnIndex
 			});
 		};
 

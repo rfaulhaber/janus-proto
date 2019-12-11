@@ -1,7 +1,7 @@
 <template>
 	<div class="columns">
 		<div class="column-iter" v-for="(column, index) in columns" v-bind:key="index">
-			<Column v-bind:index="index" />
+			<Column v-bind:columnIndex="index" />
 		</div>
 	</div>
 </template>

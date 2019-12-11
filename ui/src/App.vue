@@ -8,9 +8,6 @@
 <script>
 import Columns from './components/Columns.vue';
 import Header from './components/Header.vue';
-import { ipcRenderer } from 'electron';
-
-console.log(typeof ipcRenderer);
 
 export default {
 	name: 'app',

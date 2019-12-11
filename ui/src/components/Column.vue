@@ -1,8 +1,8 @@
 <template>
 	<div class="column-container">
-		<Header value="New Cut Paste Delcol" />
+		<Header value="New Cut Paste Delcol" v-bind:columnIndex="columnIndex" />
 		<div class="files" v-for="(file, index) in files" v-bind:key="index">
-			<File v-bind:index="index" v-bind:value="file.value" />
+			<File v-bind:fileIndex="index" v-bind:value="file.value" v-bind:columnIndex="columnIndex" />
 		</div>
 	</div>
 </template>
@@ -14,7 +14,7 @@ import File from './File';
 export default {
 	name: 'Tile',
 	props: {
-		index: Number
+		columnIndex: Number
 	},
 	components: {
 		Header,
@@ -22,7 +22,7 @@ export default {
 	},
 	computed: {
 		files() {
-			return this.$store.state.columns[this.index].files;
+			return this.$store.state.columns[this.columnIndex].files;
 		}
 	}
 };

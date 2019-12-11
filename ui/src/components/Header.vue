@@ -10,33 +10,28 @@ import 'codemirror/lib/codemirror.css';
 export default {
 	name: 'Editor',
 	props: {
-		value: String
+		value: String,
+		columnIndex: Number,
+		fileIndex: Number
 	},
 	mounted() {
+		console.log('column, file', this.columnIndex, this.fileIndex);
 		const state = {
 			middleClick: false
 		};
 
 		const handleClick = click => editor => {
-			console.log('this', this);
-			console.log('which', click);
-
 			const { word } = getClickedWord(editor);
 			const selection = editor.getSelection();
 			console.log('word', word);
 			console.log('selection', selection);
 
-			let term;
-
-			if (selection) {
-				term = selection;
-			} else {
-				term = word;
-			}
-
 			this.emit({
 				click,
-				term
+				word,
+				selection,
+				fileIndex: this.fileIndex,
+				columnIndex: this.columnIndex
 			});
 		};
 
@@ -44,14 +39,11 @@ export default {
 			value: this.value,
 			extraKeys: {
 				RightClick: handleClick('right'),
-				'Option-LeftClick': handleClick('middle'),
+				'Alt-LeftClick': handleClick('middle'),
 				'Cmd-LeftClick': handleClick('right'),
 				MiddleClick: handleClick('middle')
-			}
-		});
-
-		editor.on('mousedown', function() {
-			console.log('clicked');
+			},
+			cursorBlinkRate: 0
 		});
 
 		editor.on('beforeChange', function(inst, changeObj) {
@@ -65,6 +57,9 @@ export default {
 		function getClickedWord(editor) {
 			const range = editor.findWordAt(editor.getCursor());
 			const word = editor.getRange(range.anchor, range.head);
+
+			console.log('range', range);
+			console.log('word', word);
 
 			return {
 				word,

@@ -1,7 +1,7 @@
 <template>
 	<div class="file-container">
-		<Header value="Del Put" />
-		<Editor v-bind:text="value" />
+		<Header value="Del Put" v-bind:columnIndex="columnIndex" v-bind:fileIndex="fileIndex" />
+		<Editor v-bind:text="value" v-bind:columnIndex="columnIndex" v-bind:fileIndex="fileIndex" />
 	</div>
 </template>
 
@@ -12,7 +12,8 @@ import Editor from './Editor.vue';
 export default {
 	name: 'File',
 	props: {
-		index: Number,
+		columnIndex: Number,
+		fileIndex: Number,
 		value: String
 	},
 	components: {

@@ -13,7 +13,7 @@ const defaultState = {
 		{
 			files: [
 				{
-					value: 'default text'
+					value: ''
 				}
 			]
 		}
@@ -21,6 +21,8 @@ const defaultState = {
 };
 
 const pendingActions = [];
+
+const editorCommands = ['New', 'Del', 'Newcol', 'Delcol'];
 
 const store = new Store({
 	state: defaultState,
@@ -34,44 +36,76 @@ const store = new Store({
 		removeColumn(state, id) {
 			state.columns = state.columns.filter(column => column.id !== id);
 		},
-		addFile(state, stdout, stderr) {
+		addFileFromCore(state, stdout, stderr) {
 			console.log('stdout, stderr', stdout, stderr);
 			state.columns[state.columns.length - 1].files.push({
 				value: (stdout || '').concat(stderr || '')
 			});
+		},
+		addFileFromEditor(state, { fileIndex, columnIndex }) {
+			console.log('fileIndex, columnIndex', fileIndex, columnIndex);
+			state.columns[columnIndex].files.push({
+				value: ''
+			});
+		},
+		closeFile(state, { fileIndex, columnIndex }) {
+			console.log(
+				'closeFile -- fileIndex, columnIndex',
+				fileIndex,
+				columnIndex
+			);
+
+			state.columns[columnIndex].files.splice(fileIndex, 1);
 		}
 	},
 	actions: {
-		/*eslint no-unused-vars: "off"*/
 		emit({ commit }, command) {
 			console.log('in store', command);
 
-			const { redirectionType, ...rest } = transformCommand(command);
+			if (editorCommands.includes(command.word)) {
+				console.log('editor command!');
 
-			const transformedCommand = {
-				kind: rest,
-				id: pendingActions.length
-			};
+				const { fileIndex, columnIndex } = command;
 
-			pendingActions.push({
-				redirectionType,
-				...transformedCommand
-			});
+				switch (command.word) {
+					case 'New':
+						commit('addFileFromEditor', { fileIndex, columnIndex });
+						break;
+					case 'Del':
+						commit('closeFile', { fileIndex, columnIndex });
+						break;
+				}
+			} else {
+				const { redirectionType, ...rest } = transformCommand(command);
 
-			ipcRenderer.send('ipc', transformedCommand);
+				const transformedCommand = {
+					kind: rest,
+					id: pendingActions.length
+				};
+
+				pendingActions.push({
+					redirectionType,
+					...transformedCommand
+				});
+
+				ipcRenderer.send('ipc', transformedCommand);
+			}
 		},
 		addColumn({ commit }) {
 			commit('addColumn');
 		},
-		addFile({ commit }, stdout, stderr) {
-			commit('addFile', stdout, stderr);
+		addFileFromCore({ commit }, stdout, stderr) {
+			commit('addFileFromCore', stdout, stderr);
+		},
+		addFileFromEditor({ commit }, fileIndex, columnIndex) {
+			commit('addFileFromEditor', fileIndex, columnIndex);
 		}
 	}
 });
 
 ipcRenderer.on('ipc', (event, arg) => {
 	console.log('event, arg', event, arg);
-	const { stdout, stderr, id } = arg;
+	const { stdout, stderr } = arg;
 
 	const lastEvent = pendingActions[arg.id];
 	console.log('lastEvent', lastEvent);
@@ -85,7 +119,7 @@ ipcRenderer.on('ipc', (event, arg) => {
 		case '|':
 			break;
 		default:
-			store.dispatch('addFile', stdout || '', stderr || '');
+			store.dispatch('addFileFromCore', stdout || '', stderr || '');
 	}
 });
 
