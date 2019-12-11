@@ -3,11 +3,13 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapMutations } from 'vuex';
 import * as CodeMirror from 'codemirror';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/addon/display/fullscreen.css';
 import 'codemirror/addon/display/fullscreen.js';
+
+let editor;
 
 export default {
 	name: 'Editor',
@@ -15,6 +17,12 @@ export default {
 		text: String,
 		fileIndex: Number,
 		columnIndex: Number
+	},
+	watch: {
+		text(val) {
+			console.log('setting value', val);
+			editor.setValue(val);
+		}
 	},
 	mounted() {
 		console.log('fileindex, columnindex', this.fileIndex, this.columnIndex);
@@ -37,7 +45,7 @@ export default {
 			});
 		};
 
-		const editor = CodeMirror(this.$refs.editor, {
+		editor = CodeMirror(this.$refs.editor, {
 			value: this.text,
 			extraKeys: {
 				RightClick: handleClick('right'),
@@ -48,11 +56,23 @@ export default {
 			cursorBlinkRate: 0
 		});
 
-		editor.on('beforeChange', function(inst, changeObj) {
+		editor.on('beforeChange', (inst, changeObj) => {
 			if (state.middleClick) {
 				state.middleClick = false;
 
 				changeObj.cancel();
+			}
+
+			if (origin === '+input') {
+				console.log('beforeChange', changeObj);
+
+				changeObj.cancel();
+
+				this.updateText({
+					fileIndex: this.fileIndex,
+					columnIndex: this.columnIndex,
+					newValue: inst.getValue().concat(changeObj.text[0])
+				});
 			}
 		});
 
@@ -70,7 +90,8 @@ export default {
 		}
 	},
 	methods: {
-		...mapActions(['emit'])
+		...mapActions(['emit']),
+		...mapMutations(['updateText'])
 	}
 };
 </script>
