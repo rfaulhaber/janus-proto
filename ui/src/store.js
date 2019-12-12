@@ -4,8 +4,6 @@ import { ipcRenderer } from 'electron';
 
 Vue.use(Vuex);
 
-console.log('typeof env', typeof process);
-
 const defaultState = {
 	columns: [
 		{

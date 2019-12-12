@@ -155,7 +155,7 @@ pub fn handle_right(
 			if metadata.is_dir() {
 				// sure why not
 				let ls_output = Command::new("ls")
-					.args(&["-a", path.as_str()])
+					.args(&["-a", normalized_path.as_str()])
 					.stdout(Stdio::piped())
 					.stderr(Stdio::piped())
 					.spawn()?
