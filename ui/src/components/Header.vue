@@ -3,9 +3,11 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapMutations } from 'vuex';
 import * as CodeMirror from 'codemirror';
 import 'codemirror/lib/codemirror.css';
+
+let editor;
 
 export default {
 	name: 'Editor',
@@ -15,8 +17,13 @@ export default {
 		fileIndex: Number,
 		title: String
 	},
+	watch: {
+		text(val) {
+			console.log('setting value', val);
+			editor.setValue(val);
+		}
+	},
 	mounted() {
-		console.log('column, file', this.columnIndex, this.fileIndex);
 		const state = {
 			middleClick: false
 		};
@@ -41,7 +48,7 @@ export default {
 			? `${this.title} ${this.value}`
 			: this.value;
 
-		const editor = CodeMirror(this.$refs.editor, {
+		editor = CodeMirror(this.$refs.editor, {
 			value: headerTitle,
 			extraKeys: {
 				RightClick: handleClick('right'),
@@ -57,6 +64,16 @@ export default {
 				state.middleClick = false;
 
 				changeObj.cancel();
+			}
+
+			if (origin === '+input') {
+				changeObj.cancel();
+
+				this.updateText({
+					fileIndex: this.fileIndex,
+					columnIndex: this.columnIndex,
+					newValue: inst.getValue().concat(changeObj.text[0])
+				});
 			}
 		});
 
@@ -74,7 +91,8 @@ export default {
 		}
 	},
 	methods: {
-		...mapActions(['emit'])
+		...mapActions(['emit']),
+		...mapMutations(['updateText'])
 	}
 };
 </script>

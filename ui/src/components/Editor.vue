@@ -32,7 +32,7 @@ export default {
 
 		const handleClick = click => editor => {
 			const { word } = getClickedWord(editor);
-			const selection = editor.getSelection();
+			const selection = editor.getSelection().trim();
 			console.log('word', word);
 			console.log('selection', selection);
 
@@ -51,7 +51,8 @@ export default {
 				RightClick: handleClick('right'),
 				'Alt-LeftClick': handleClick('middle'),
 				'Cmd-LeftClick': handleClick('right'),
-				MiddleClick: handleClick('middle')
+				MiddleClick: handleClick('middle'),
+				'Ctrl-LeftClick': handleClick('middle')
 			},
 			cursorBlinkRate: 0
 		});
@@ -64,8 +65,6 @@ export default {
 			}
 
 			if (origin === '+input') {
-				console.log('beforeChange', changeObj);
-
 				changeObj.cancel();
 
 				this.updateText({
@@ -76,9 +75,15 @@ export default {
 			}
 		});
 
+		editor.on('mousedown', (inst, event) => {
+			if (event.button === 1) {
+				event.preventDefault();
+			}
+		});
+
 		function getClickedWord(editor) {
 			const range = editor.findWordAt(editor.getCursor());
-			const word = editor.getRange(range.anchor, range.head);
+			const word = editor.getRange(range.anchor, range.head).trim();
 
 			console.log('range', range);
 			console.log('word', word);
