@@ -4,6 +4,8 @@ A text editor based on the Acme editor from Plan 9.
 This was built as part of a 10-day hackathon. It's hardly feature-complete
 and is very buggy and hacky! Please forgive my garbage code.
 
+![](screenshot.png)
+
 ## Motivation
 
 The Acme editor even today feels innovative. Rather than being limited by the
@@ -18,7 +20,7 @@ Pn8M)
 is well worth watching.
 
 Aside for just fun, I wanted to clone Acme because I feel like it needs a
-slight upgrade.  I felt that the design of the
+slight upgrade. I felt that the design of the
 [Xi editor](https://github.com/xi-editor/xi-editor) was worthwhile because it
 allowed the editor to decouple the functionality of the editor with the UI,
 hopefully allowing for a faster editing experience.
